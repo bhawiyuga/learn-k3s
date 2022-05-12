@@ -1,0 +1,11 @@
+master:
+  hosts:
+    "${master_instance.public_ip}":
+
+worker:
+  hosts:
+%{ for instance in worker_instances ~}
+    "${instance.public_ip}":
+  %{ endfor ~}
+vars:
+    MASTER_IP: 192.168.56.10

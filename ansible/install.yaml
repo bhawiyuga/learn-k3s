@@ -1,0 +1,21 @@
+---
+- name: Ping, update repo, then install docker
+  hosts: 
+    - master
+    - worker
+  become: yes
+  tasks:
+    - name: Ping server
+      ping:
+    - name: Update repo
+      apt:
+        update_cache: yes
+    - name: Install docker
+      script:
+        cmd: ./install_docker.sh
+    - name: Add user to docker group
+      user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: yes
+        state: present

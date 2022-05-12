@@ -1,0 +1,31 @@
+---
+- name: Ping, update repo, then install docker
+  hosts: master
+  # become: yes
+  tasks:
+    - name: Ping server
+      ping:
+    - name: Install k3s master
+      shell:
+        cmd: curl -sfL https://get.k3s.io | sh -s -
+      environment :
+        K3S_NODE_NAME: master
+        INSTALL_K3S_EXEC: "--write-kubeconfig ~/.kube/config --write-kubeconfig-mode 666 --node-external-ip ${MASTER_IP} --tls-san ${MASTER_IP}"
+    - name: Get master token
+      become: yes
+      fetch:
+        src: /var/lib/rancher/k3s/server/node-token
+        dst: node-token
+
+- name: Ping, update repo, then install docker
+  hosts: worker
+  # become: yes
+  tasks:
+    - name: Ping server
+      ping:
+    - name: Install k3s worker
+      shell:
+        cmd: curl -sfL https://get.k3s.io | sh -s -
+      environment :
+        K3S_URL: "https://{{ MASTER_IP }}:6443"
+        K3S_TOKEN: "{{ lookup('file', './node-token') }}"

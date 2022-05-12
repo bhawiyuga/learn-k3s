@@ -1,0 +1,9 @@
+master:
+  hosts:
+    "18.140.236.60":
+
+worker:
+  hosts:
+    "13.250.191.62":
+  vars:
+    MASTER_IP: 192.168.56.10
